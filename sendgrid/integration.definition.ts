@@ -21,7 +21,7 @@ export default new IntegrationDefinition({
       input: { 
         schema: z.object({
           from: z.string().email(),
-          to: z.string().email(),
+          to: z.string(),
           subject: z.string(),
           content: z.string(),
         }),

@@ -3,14 +3,13 @@ interface EmailContent {
     value: string
   }
   
-  interface EmailAddress {
-    email: string
-    name?: string
-  }
-  
   interface Personalization {
     to: EmailAddress[]
     cc?: EmailAddress[]
+  }
+
+  export interface EmailAddress {
+    email: string
   }
   
   export interface SendGridEmail {

@@ -1,7 +1,7 @@
 import * as sdk from '@botpress/sdk'
 import * as bp from '.botpress'
 import axios from 'axios'
-import { SendGridEmail, SendGridError } from './types'
+import { SendGridEmail, SendGridError, EmailAddress } from './types'
 
 export default new bp.Integration({
   register: async (args) => {
@@ -53,12 +53,24 @@ export default new bp.Integration({
     sendEmail: async (args): Promise<{}> => {
       args.logger.forBot().info('Test: Sending Email')
       const apiKey = args.ctx.configuration.apiKey
+
+      let toAddresses: EmailAddress[] = []
+
+      try {
+        const parsedTo = JSON.parse(args.input.to)
+        if (Array.isArray(parsedTo)) {
+          toAddresses = parsedTo.map((email: string) => ({ email }))
+        } else {
+          toAddresses = [{ email: parsedTo }]
+        }
+      } catch (error) {
+        toAddresses = [{ email: args.input.to }]
+      }
+
       const email: SendGridEmail = {
         personalizations: [
           {
-            to: [
-              { email: args.input.to }
-            ],
+            to: toAddresses
           }
         ],
         from: { email: args.input.from },
@@ -81,13 +93,13 @@ export default new bp.Integration({
         })
         args.logger.forBot().info('Email sent successfully')
         return {}
-            } catch (error: any) {
-                const sendGridError: SendGridError = error.response.data
-                args.logger.forBot().error('Error sending mail:', sendGridError.errors)
-                throw new sdk.RuntimeError(`Error sending mail ${sendGridError.errors}`)
-            }
-          }
-        },
-        channels: {},
-        handler: async () => {},
-      })
+      } catch (error: any) {
+          const sendGridError: SendGridError = error.response.data
+          args.logger.forBot().error('Error sending mail:', sendGridError.errors)
+          throw new sdk.RuntimeError(`Error sending mail ${sendGridError.errors}`)
+      }
+    }
+  },
+  channels: {},
+  handler: async () => {},
+})

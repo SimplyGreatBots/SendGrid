@@ -19,3 +19,10 @@ interface EmailContent {
     subject: string
     content: EmailContent[]
   }
+
+  export interface SendGridError {
+    errors: Array<{
+      field: string;
+      message: string;
+    }>;
+  }

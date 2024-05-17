@@ -5,7 +5,7 @@ export default new IntegrationDefinition({
   name: integrationName,
   title: 'SendGrid',
   description: 'This integration allows you to send emails with SendGrid.',
-  version: '0.0.1',
+  version: '0.0.2',
   readme: 'hub.md',
   icon: 'icon.svg',
   configuration: {
